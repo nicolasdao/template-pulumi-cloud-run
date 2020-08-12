@@ -4,6 +4,7 @@
 	```
 	git clone https://github.com/nicolasdao/template-pulumi-cloud-run.git yourprojectname
 	cd yourprojectname
+	rm -rf .git/
 	npm i
 	```
 2. Rename the following properties:
