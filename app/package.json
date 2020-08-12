@@ -1,0 +1,42 @@
+{
+  "name": "template-cloud-run",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nicolasdao/template-cloud-run.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nicolasdao/template-cloud-run/issues"
+  },
+  "homepage": "https://github.com/nicolasdao/template-cloud-run#readme",
+  "config": {
+    "devport": 5000
+  },
+  "scripts": {
+    "dev": "TZ=UTC NODE_ENV=dev PORT=$npm_package_config_devport node-dev -r dotenv/config index.js",
+    "lint": "eslint index.js src/ test/ --fix",
+    "push": "git push --follow-tags origin master",
+    "rls": "standard-version --release-as",
+    "start": "TZ=UTC NODE_ENV=production node -r dotenv/config index.js",
+    "test": "mocha --exit",
+    "v": "node -e \"console.log(require('./package.json').version)\""
+  },
+  "author": "Nicolas Dao",
+  "license": "BSD-3-Clause",
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "eslint": "^6.8.0",
+    "mocha": "^8.0.1",
+    "node-dev": "^4.0.0",
+    "standard-version": "^8.0.2"
+  },
+  "dependencies": {
+    "@neap/funky": "^0.8.0",
+    "core-async": "^2.0.4",
+    "dotenv": "^8.2.0",
+    "form-data": "^2.4.0",
+    "node-fetch": "^2.3.0"
+  }
+}
