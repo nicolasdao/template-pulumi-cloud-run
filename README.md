@@ -92,9 +92,8 @@
 - `Prod`: <PROD ENDPOINT>
 
 ## APIs
-
-- `/<ENDPOINT 01>`
-- `/<ENDPOINT 02>`
+- `GET /<ENDPOINT 01>`
+- `POST /<ENDPOINT 02>`
 
 # Dev
 ## Project structure
