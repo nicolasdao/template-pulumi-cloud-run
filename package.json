@@ -1,0 +1,30 @@
+{
+  "name": "your-project-name",
+  "version": "0.0.1",
+  "description": "Enter your description here",
+  "main": "index.js",
+  "scripts": {
+    "preview:test": "pulumi preview -s test",
+    "up:test": "pulumi up -s test -y",
+    "details:test": "pulumi stack --show-urns -s test",
+    "lint": "eslint index.js app/ utils/ --fix",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nicolasdao/template-pulumi-cloud-run.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nicolasdao/template-pulumi-cloud-run/issues"
+  },
+  "homepage": "https://github.com/nicolasdao/template-pulumi-cloud-run#readme",
+  "dependencies": {
+    "@pulumi/docker": "^2.2.3",
+    "@pulumi/gcp": "^3.17.0",
+    "@pulumi/pulumi": "^2.8.2",
+    "dotenv": "^8.2.0",
+    "eslint": "^7.6.0"
+  }
+}

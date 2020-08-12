@@ -1,0 +1,3 @@
+name: your-service-name
+runtime: nodejs
+description: Some good description for Pulumi.

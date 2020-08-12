@@ -1,0 +1,41 @@
+name: Pulumi up
+on:
+  push:
+    branches:
+      - test
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+      - '**/*.gitignore'
+      - '**/*.eslintrc.json'
+      - '**/*.dockerignore'
+jobs:
+  up:
+    name: Update
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create variables
+        id: vars 
+        run: |
+          branch=${GITHUB_REF##*/}
+          echo "::set-output name=DB_NAME::DB_NAME_${branch^^}"
+          echo "::set-output name=DB_USER::DB_USER_${branch^^}"
+          echo "::set-output name=DB_PASSWORD::DB_PASSWORD_${branch^^}"
+          echo "::set-output name=DB_MASTER_ENDPOINT::DB_MASTER_ENDPOINT_${branch^^}"
+          echo "::set-output name=DB_READER_ENDPOINT::DB_READER_ENDPOINT_${branch^^}"
+          echo "::set-output name=DB_MAX_CONN::DB_MAX_CONN_${branch^^}"
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - uses: docker://pulumi/actions
+        with:
+          args: up -s ${GITHUB_REF##*/} -y
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}  
+          DB_NAME: ${{ secrets[steps.vars.outputs.DB_NAME] }}  
+          DB_USER: ${{ secrets[steps.vars.outputs.DB_USER] }}  
+          DB_PASSWORD: ${{ secrets[steps.vars.outputs.DB_PASSWORD] }}  
+          DB_MASTER_ENDPOINT: ${{ secrets[steps.vars.outputs.DB_MASTER_ENDPOINT] }}  
+          DB_READER_ENDPOINT: ${{ secrets[steps.vars.outputs.DB_READER_ENDPOINT] }}  
+          DB_MAX_CONN: ${{ secrets[steps.vars.outputs.DB_MAX_CONN] }}  
