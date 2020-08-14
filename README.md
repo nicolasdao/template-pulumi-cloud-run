@@ -68,7 +68,7 @@
 
 <PROJECT DESCRIPTION>
 
-- This project provisions the following resources:
+This project provisions the following resources:
 	- Enables the `run.googleapis.com` service on the Google Cloud project. 
 	- Creates a new `Docker image` with the `app` code in it and deploys it to GCR.
 	- Creates a new `Service Account` for the new Cloud Run service.
