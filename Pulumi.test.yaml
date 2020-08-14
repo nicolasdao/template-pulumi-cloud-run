@@ -1,5 +1,5 @@
 config:
   your-service-name:memory: 512Mi
-  your-service-name:parentStack: some-parent-stack
+  your-service-name:parentProject: some-parent-project-name
   gcp:project: your-gcp-project-id
   gcp:region: australia-southeast1

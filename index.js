@@ -1,8 +1,7 @@
 require('dotenv').config()
 const pulumi = require('@pulumi/pulumi')
 const gcp = require('@pulumi/gcp')
-const docker = require('@pulumi/docker')
-const { git } = require('./utils')
+const { cloudRun } = require('./utils')
 
 // Validates that the environment variables are set up
 const ENV_VARS = [
@@ -21,82 +20,96 @@ for (let varName of ENV_VARS)
 const config = new pulumi.Config()
 
 const STACK_NAME = pulumi.getStack()
-const PARENT_STACK = config.require('parentStack')
+const PARENT_PROJECT = config.require('parentProject')
 const MEMORY = config.require('memory') || '512Mi'
-const SHORT_SHA = git.shortSha()
-const IMAGE_NAME = `${config.name}-${STACK_NAME}-image`
+const SERVICE_NAME = `${config.name}-${STACK_NAME}`
+const IMAGE_NAME = `${SERVICE_NAME}-image`
+const SERVICE_ACCOUNT_NAME = `${SERVICE_NAME}-cloudrun`
 
-if (!SHORT_SHA)
-	throw new Error('This project is not a git repository')
-if (!PARENT_STACK)
-	throw new Error(`Missing required 'parentStack' in the '${STACK_NAME}' stack config`)
+// UNCOMMENT THIS CODE SNIPPET TO ALLOW SECURE ACCESS VIA HTTPS TO 'someOtherServiceStack'
+// const SOME_OTHER_SERVICE_PROJECT = config.require('someOtherCloudRunProject')
+// const SOME_OTHER_SERVICE_NAME = `${SOME_OTHER_SERVICE_PROJECT.split('/').reverse()[0]}-${STACK_NAME}`
+// if (!SOME_OTHER_SERVICE_PROJECT)
+// 	throw new Error(`Missing required 'someOtherCloudRunProject' in the '${STACK_NAME}' stack config`)
+// const someOtherServiceStack = new pulumi.StackReference(`${SOME_OTHER_SERVICE_PROJECT}/${STACK_NAME}`)
+
+if (!PARENT_PROJECT)
+	throw new Error(`Missing required 'parentProject' in the '${STACK_NAME}' stack config`)
 if (!gcp.config.project)
 	throw new Error(`Missing required 'gcp:project' in the '${STACK_NAME}' stack config`)
 if (!gcp.config.region)
 	throw new Error(`Missing required 'gcp:region' in the '${STACK_NAME}' stack config`)
 
 // Gets the parent stack reference (doc: https://www.pulumi.com/docs/intro/concepts/organizing-stacks-projects/#inter-stack-dependencies)
-const infraStack = new pulumi.StackReference(`${PARENT_STACK}/${STACK_NAME}`)
+const infraStack = new pulumi.StackReference(`${PARENT_PROJECT}/${STACK_NAME}`)
 
-// Enables the Cloud Run servicec (doc: https://www.pulumi.com/docs/reference/pkg/gcp/projects/service/)
-const enableCloudRun = new gcp.projects.Service('run.googleapis.com', {
-	service: 'run.googleapis.com'
-}, {
-	dependsOn: [infraStack]
-})
+const enableCloudRun = cloudRun.enableCloudRun({ dependsOn: [infraStack] })
 
-const gcpAccessToken = pulumi.output(gcp.organizations.getClientConfig({}).then(c => c.accessToken))
+const dockerImage = cloudRun.uploadDockerImage({ name:IMAGE_NAME }, { dependsOn: [infraStack] })
 
-// Uploads new Docker image with your app to Google Cloud Container Registry (doc: https://www.pulumi.com/docs/reference/pkg/docker/image/)
-const dockerImage = new docker.Image(IMAGE_NAME, {
-	imageName: pulumi.interpolate`gcr.io/${gcp.config.project}/${config.name}:${SHORT_SHA}`,
-	build: {
-		context: './app'
-	},
-	registry: {
-		server: 'gcr.io',
-		username: 'oauth2accesstoken',
-		password: pulumi.interpolate`${gcpAccessToken}`
-	}
-}, {
-	dependsOn: [infraStack]
-})
+const serviceAccount = cloudRun.createServiceAccount({ name: SERVICE_ACCOUNT_NAME })
 
-// Deploys the new Docker image to Google Cloud Run (doc: https://www.pulumi.com/docs/reference/pkg/gcp/cloudrun/)
-const cloudRunServiceName = `${config.name}-${STACK_NAME}`
-const cloudRunService = new gcp.cloudrun.Service(cloudRunServiceName, {
-	name: cloudRunServiceName,
-	location: gcp.config.region,
-	template: {
-		// doc: https://www.pulumi.com/docs/reference/pkg/gcp/cloudrun/service/#servicetemplatespec
-		spec: {
-			// doc: https://www.pulumi.com/docs/reference/pkg/gcp/cloudrun/service/#servicetemplatespeccontainer
-			containers: [{
-				envs: ENV_VARS.map(name => ({ name, value:process.env[name] })),
-				image: dockerImage.imageName,
-				// doc: https://www.pulumi.com/docs/reference/pkg/gcp/cloudrun/service/#servicetemplatespeccontainerresources
-				resources: {
-					limits: {
-						memory: MEMORY // Available units are 'Gi', 'Mi' and 'Ki'
-					},
-				},
-			}],
-			containerConcurrency: 80, // 80 is the max. Above this limit, Cloud Run spawn another container.
-		},
-	},
-}, { 
-	dependsOn: [
-		infraStack,
-		enableCloudRun 
-	]
-})
+const cloudRunService = cloudRun.createCloudRunVersion({
+	name: SERVICE_NAME, 
+	memory: MEMORY, 
+	envs: [
+		...ENV_VARS.map(name => ({ name, value:process.env[name] })),
+		// UNCOMMENT THIS CODE SNIPPET TO ALLOW SECURE ACCESS VIA HTTPS TO 'someOtherServiceStack'
+		// {
+		// 	name: 'SOME_OTHER_SERVICE_ENDPOINT',
+		// 	value: someOtherServiceStack.outputs.cloudRunService.url
+		// }
+	], 
+	dockerImage, 
+	serviceAccount
+}, { dependsOn: [ infraStack, enableCloudRun ] })
 
+// UNCOMMENT THIS CODE SNIPPET TO ALLOW SECURE ACCESS VIA HTTPS TO 'someOtherServiceStack'
+// const invokerAccessToDbApiBinding = cloudRun.allowServiceAccountToInvokeService({ 
+// 	serviceAccount: { 
+// 		name:SERVICE_ACCOUNT_NAME, 
+// 		output:serviceAccount 
+// 	}, 
+// 	cloudRunService: { 
+// 		name:SOME_OTHER_SERVICE_NAME, 
+// 		output:someOtherServiceStack.outputs.cloudRunService 
+// 	}
+// }, { 
+// 	parent: cloudRunService
+// })
+
+// UNCOMMENT THIS CODE SNIPPET TO ALLOW PUBLIC HTTPS ACCESS
+// const publicAccessBinding = cloudRun.makePublic({ 
+// 	cloudRunService: {
+// 		name: SERVICE_NAME,
+// 		output: cloudRunService
+// 	}
+// }, { 
+// 	parent:cloudRunService
+// })
 
 module.exports = {
+	serviceAccount: {
+		id: serviceAccount.id,
+		name: serviceAccount.name,
+		accountId: serviceAccount.accountId,
+		email: serviceAccount.email,
+		project: serviceAccount.project
+	},
 	cloudRunService: {
 		id: cloudRunService.id,
-		url: cloudRunService.status.url
-	}, 
+		name: cloudRunService.name,
+		project: cloudRunService.project,
+		location: cloudRunService.location,
+		url: cloudRunService.status.url,
+		serviceAccount: cloudRunService.template.spec.serviceAccountName
+	},
 	dockerImage: dockerImage.imageName,
-	enableCloudRun: enableCloudRun.id
+	enableCloudRun: enableCloudRun.id,
+	// UNCOMMENT THIS CODE SNIPPET TO ALLOW PUBLIC HTTPS ACCESS OR ALLOW SECURE ACCESS VIA HTTPS TO 'someOtherServiceStack'
+	// iamPolicies: {
+	// 	invokerAccessToDbApiBinding: invokerAccessToDbApiBinding.id,
+	// 	publicAccessBinding: publicAccessBinding.id
+	// }
 }
+

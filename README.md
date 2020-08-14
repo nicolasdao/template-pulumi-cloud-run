@@ -68,6 +68,14 @@
 
 <PROJECT DESCRIPTION>
 
+- This project provisions the following resources:
+	- Enables the `run.googleapis.com` service on the Google Cloud project. 
+	- Creates a new `Docker image` with the `app` code in it and deploys it to GCR.
+	- Creates a new `Service Account` for the new Cloud Run service.
+	- Deploys a new `Cloud Run service's version` associated with the previously created service account.
+	- (optional) Creates a new `Binding` that enables public access via HTTPS.
+	- (optional) Creates a new `Binding` that enables the Cloud Run service to access via HTTPS another protected Cloud Run service (via binding set up on the service account).
+
 # Table of contents
 
 > * [Endpoints](#endpoints)
@@ -102,6 +110,13 @@ This project is a NodeJS Pulumi project with an `app` subfolder containing the a
 
 ### Pulumi project
 
+- This project provisions the following resources:
+	- Enables the `run.googleapis.com` service on the Google Cloud project. 
+	- Creates a new `Docker image` with the `app` code in it and deploys it to GCR.
+	- Creates a new `Service Account` for the new Cloud Run service.
+	- Deploys a new `Cloud Run service's version` associated with the previously created service account.
+	- (optional) Creates a new `Binding` that enables public access via HTTPS.
+	- (optional) Creates a new `Binding` that enables the Cloud Run service to access via HTTPS another protected Cloud Run service (via binding set up on the service account).
 - Pulumi is set up in the CI/CD pipeline. This means that you do not need to explicitly install it or use it during the development phase. Simply commit your work to GitHub and the rest is taking care of in the background. If you are required to configure the CI/CD pipeline, then jump to the [Maintaining Pulumi](#maintaining-pulumi) section.
 - __Stacks__: They are using the branch convention. This means the branch name is the stack name. You can see the number of configured stack by looking at how many `Pulumi.<STACK>.yaml` are set up in the root folder. As for their set up in the CI/CD pipeline, refer to the `.github/workflows/deploy.yml` file to see which branch triggers a deployment. 
 - __Environment variables__: The Pulumi `index.js` file uses environment variables to pass secrets and configuration settings to the stack. Those environment variables are either set up via the [`.github` workflow](#github-workflow) or using `dotenv` locally as explained in the [Maintaining Pulumi](#maintaining-pulumi) section.
