@@ -62,7 +62,10 @@ const cloudRunService = cloudRun.createCloudRunVersion({
 	], 
 	dockerImage, 
 	serviceAccount
-}, { dependsOn: [ infraStack, enableCloudRun ] })
+}, { 
+	parent: serviceAccount,
+	dependsOn: [ infraStack, enableCloudRun ] 
+})
 
 // UNCOMMENT THIS CODE SNIPPET TO ALLOW SECURE ACCESS VIA HTTPS TO 'someOtherServiceStack'
 // const invokerAccessToDbApiBinding = cloudRun.allowServiceAccountToInvokeService({ 
