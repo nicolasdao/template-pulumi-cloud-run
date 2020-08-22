@@ -2,5 +2,4 @@
 *.orig
 node_modules/
 .env
-.env.prod
-.env.test
+.env.*
