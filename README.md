@@ -19,7 +19,7 @@
 		- `description`
 	- `Pulumi.test.yaml`:
 		- `config.<your-service-name>.memory`: Replace `<your-service-name>` with the `name` set in the `Pulumi.yaml`. As for the value, choose one of the following unit (e.g., `Gi`, `Mi` or `Ki`) and do not exceed 2Gi (e.g., `512Mi`).
-		- `config.<your-service-name>.parentStack`: Pulumi parent stack. This might be optionial, but usually, there is a parent infrastructure. Replace `<your-service-name>` with the `name` set in the `Pulumi.yaml`. 
+		- `config.<your-service-name>.projectRef`: Pulumi projects. This might be optionial, but usually, there is one  infrastructure project. Replace `<your-service-name>` with the `name` set in the `Pulumi.yaml`. 
 		- `gcp:project`: Your GCP project ID.
 		- `gcp:region`: Your GCP region.
 3. Adjust the environment variables needed for your project:
@@ -111,7 +111,6 @@ This project is a NodeJS Pulumi project with an `app` subfolder containing the a
 ### Pulumi project
 
 - This project provisions the following resources:
-	- Enables the `run.googleapis.com` service on the Google Cloud project. 
 	- Creates a new `Docker image` with the `app` code in it and deploys it to GCR.
 	- Creates a new `Service Account` for the new Cloud Run service.
 	- Deploys a new `Cloud Run service's version` associated with the previously created service account.

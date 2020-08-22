@@ -30,7 +30,7 @@
     "eslint": "^6.8.0",
     "mocha": "^8.0.1",
     "node-dev": "^4.0.0",
-    "standard-version": "^8.0.2"
+    "standard-version": "^9.0.0"
   },
   "dependencies": {
     "@neap/funky": "^0.8.0",

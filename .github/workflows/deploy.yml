@@ -31,6 +31,8 @@ jobs:
         with:
           args: up -s ${GITHUB_REF##*/} -y
         env:
+          # UNCOMMENT THIS IF YOU NEED TO PROVIDE A 'GITHUB_PERSONAL_TOKEN' (EXAMPLE: YOU NEED TO INSTALL PRIVATE GITHUB PACKAGES)
+          # GITHUB_PERSONAL_TOKEN: ${{ secrets.SUPERADMIN_GITHUB_PERSONAL_TOKEN }} 
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}  
           DB_NAME: ${{ secrets[steps.vars.outputs.DB_NAME] }}  

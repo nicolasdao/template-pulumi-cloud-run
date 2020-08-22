@@ -1,6 +1,13 @@
 FROM node:12-slim
 
+# UNCOMMENT THIS IF YOU NEED TO PROVIDE A 'GITHUB_TOKEN' (EXAMPLE: YOU NEED TO INSTALL PRIVATE GITHUB PACKAGES)
+# ARG GITHUB_TOKEN
+
 WORKDIR /usr/src/app
+
+# UNCOMMENT THIS IF YOU NEED TO PROVIDE A 'GITHUB_TOKEN' (EXAMPLE: YOU NEED TO INSTALL PRIVATE GITHUB PACKAGES)
+# RUN echo "//npm.pkg.github.com/:_authToken=$GITHUB_TOKEN" >> ~/.npmrc
+# COPY .npmrc ./
 
 COPY package*.json ./
 
@@ -9,3 +16,5 @@ RUN npm install --only=prod
 COPY . ./
 
 CMD npm start
+
+

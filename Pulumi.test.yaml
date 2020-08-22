@@ -1,5 +1,7 @@
 config:
   your-service-name:memory: 512Mi
-  your-service-name:parentProject: some-parent-project-name
+  # Set of other project references
+  your-service-name:projectRef: 
+    infra: infra-project-name # e.g., your-org/infra
   gcp:project: your-gcp-project-id
   gcp:region: australia-southeast1
