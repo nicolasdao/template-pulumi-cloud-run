@@ -69,10 +69,11 @@
 > WARNING: To use this template, please make sure the following prerequisites are all met:
 >	- You have access to a GCP project.
 >	- The following GCP services must be enabled in that GCP project:
->		- 	`cloudbuild.googleapis.com`
->		- 	`containerregistry.googleapis.com`
->		- 	`run.googleapis.com`
->		- 	`iam.googleapis.com` (required to create service accounts)
+>		- `cloudresourcemanager.googleapis.com` (required to provision certain resources like containers on GCP)
+>		- `cloudbuild.googleapis.com`
+>		- `containerregistry.googleapis.com`
+>		- `run.googleapis.com`
+>		- `iam.googleapis.com` (required to create service accounts)
 >	- This source-code is hosted on GitHub.
 
 <PROJECT DESCRIPTION>
