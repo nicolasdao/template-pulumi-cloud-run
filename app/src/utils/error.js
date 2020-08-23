@@ -207,6 +207,13 @@ const wrapErrors = (msg, errors, options) => {
 	}
 }
 
+class HttpError extends Error {
+	constructor(message, code) {
+		super(message)
+		this.code = code || 500
+	}
+}
+
 module.exports = {
 	throwError,
 	throwIfUndefined,
@@ -219,6 +226,7 @@ module.exports = {
 	throwIfInvalidURL,
 	throwIfInvalidEmail,
 	catchErrors,
-	wrapErrors
+	wrapErrors,
+	HttpError
 }
 
