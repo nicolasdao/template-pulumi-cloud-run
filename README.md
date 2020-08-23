@@ -66,10 +66,18 @@
 
 # <YOUR TITLE HERE>
 
+> WARNING: To use this template, please make sure the following prerequisites are all met:
+>	- You have access to a GCP project.
+>	- The following GCP services must be enabled in that GCP project:
+>		- 	`cloudbuild.googleapis.com`
+>		- 	`containerregistry.googleapis.com`
+>		- 	`run.googleapis.com`
+>		- 	`iam.googleapis.com` (required to create service accounts)
+>	- This source-code is hosted on GitHub.
+
 <PROJECT DESCRIPTION>
 
 This project provisions the following resources:
-- Enables the `run.googleapis.com` service on the Google Cloud project. 
 - Creates a new `Docker image` with the `app` code in it and deploys it to GCR.
 - Creates a new `Service Account` for the new Cloud Run service.
 - Deploys a new `Cloud Run service's version` associated with the previously created service account.
