@@ -65,7 +65,7 @@ const cloudRunService = cloudRun.deployCloudRunVersion({
 // 	name: `someotherservice-invoker-binding-for-${serviceName}`,
 // 	serviceAccounts:[serviceAccount]
 // }, {
-// 	parent: stackReference.neededOtherStack.outputs.cloudRunService
+// 	parent: serviceAccount
 // })
 
 // UNCOMMENT THIS CODE SNIPPET TO ALLOW PUBLIC HTTPS ACCESS
