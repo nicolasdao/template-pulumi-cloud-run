@@ -33,7 +33,7 @@
     "standard-version": "^9.0.0"
   },
   "dependencies": {
-    "@neap/funky": "^0.8.0",
+    "@neap/funky": "^0.8.1",
     "core-async": "^2.0.4",
     "dotenv": "^8.2.0",
     "form-data": "^2.4.0",
